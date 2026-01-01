@@ -5,6 +5,7 @@
   <title>Crypto Profit Calculator After Fees</title>
   <meta name="description" content="Calculate your real crypto profit after trading and network fees.">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -14,33 +15,123 @@
       max-width: 600px;
       margin: auto;
     }
+
     h1 {
       color: #38bdf8;
+      margin-bottom: 10px;
     }
+
     p {
       color: #cbd5f5;
     }
-    .box {
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: none;
+      font-size: 16px;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      background: #38bdf8;
+      color: #020617;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0ea5e9;
+    }
+
+    .result {
+      margin-top: 25px;
       background: #020617;
       padding: 20px;
       border-radius: 10px;
-      margin-top: 20px;
+      display: none;
+    }
+
+    .result span {
+      color: #38bdf8;
+      font-weight: bold;
     }
   </style>
 </head>
+
 <body>
 
   <h1>Crypto Profit Calculator After Fees</h1>
+  <p>See your real profit after exchange and network fees.</p>
 
-  <p>
-    See your real trading profit.
-    Exchange fees and network fees quietly eat your gains.
-  </p>
+  <label>Buy price (USD)</label>
+  <input id="buyPrice" type="number" step="any">
 
-  <div class="box">
-    <p><strong>Status:</strong> Project setup complete ✅</p>
-    <p>Next step: add calculator logic.</p>
+  <label>Sell price (USD)</label>
+  <input id="sellPrice" type="number" step="any">
+
+  <label>Amount (coins)</label>
+  <input id="amount" type="number" step="any">
+
+  <label>Exchange fee (%)</label>
+  <input id="feePercent" type="number" step="any" value="0.1">
+
+  <label>Network fee (USD)</label>
+  <input id="networkFee" type="number" step="any" value="0">
+
+  <button onclick="calculate()">Calculate Real Profit</button>
+
+  <div class="result" id="resultBox">
+    <p>Gross profit: <span id="grossProfit"></span> USD</p>
+    <p>Total fees: <span id="totalFees"></span> USD</p>
+    <p>Net profit: <span id="netProfit"></span> USD</p>
+    <p>Real ROI: <span id="roi"></span> %</p>
   </div>
+
+  <script>
+    function calculate() {
+      const buyPrice = parseFloat(document.getElementById('buyPrice').value);
+      const sellPrice = parseFloat(document.getElementById('sellPrice').value);
+      const amount = parseFloat(document.getElementById('amount').value);
+      const feePercent = parseFloat(document.getElementById('feePercent').value);
+      const networkFee = parseFloat(document.getElementById('networkFee').value);
+
+      if (!buyPrice || !sellPrice || !amount) {
+        alert("Please fill in all required fields");
+        return;
+      }
+
+      const grossBuy = buyPrice * amount;
+      const grossSell = sellPrice * amount;
+
+      const exchangeFeeBuy = grossBuy * (feePercent / 100);
+      const exchangeFeeSell = grossSell * (feePercent / 100);
+
+      const totalFees = exchangeFeeBuy + exchangeFeeSell + networkFee;
+      const grossProfit = grossSell - grossBuy;
+      const netProfit = grossProfit - totalFees;
+      const roi = (netProfit / grossBuy) * 100;
+
+      document.getElementById('grossProfit').innerText = grossProfit.toFixed(2);
+      document.getElementById('totalFees').innerText = totalFees.toFixed(2);
+      document.getElementById('netProfit').innerText = netProfit.toFixed(2);
+      document.getElementById('roi').innerText = roi.toFixed(2);
+
+      document.getElementById('resultBox').style.display = "block";
+    }
+  </script>
 
 </body>
 </html>
