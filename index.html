@@ -134,6 +134,12 @@ Fees quietly destroy real profits.
 <div id="result" class="result"></div>
 
 <script>
+let lastCalculation = null;
+const VALID_KEYS = [
+  "TEST-UNLOCK-123",
+  "PRO-ACCESS-456"
+];
+
 function calculate() {
   const buy = parseFloat(document.getElementById("buy").value);
   const sell = parseFloat(document.getElementById("sell").value);
@@ -146,9 +152,13 @@ function calculate() {
   }
 
   const grossProfit = sell - buy;
+  const netProfit = grossProfit - fees;
+  const roi = (netProfit / buy) * 100;
   const feePercent = grossProfit !== 0
     ? (fees / grossProfit) * 100
     : 0;
+
+  lastCalculation = { netProfit, roi };
 
   document.getElementById("result").innerHTML = `
     <p>
@@ -163,17 +173,23 @@ function calculate() {
     <hr>
 
     <p class="locked">
-      Net profit (after fees): <strong>🔒 locked</strong>
+      Net profit (after fees): <strong id="net">🔒 locked</strong>
     </p>
 
     <p class="locked">
-      Real ROI (after fees): <strong>🔒 locked</strong>
+      Real ROI (after fees): <strong id="roi">🔒 locked</strong>
     </p>
 
     <div class="pay-box">
       <a href="https://8648838217652.gumroad.com/l/dvwjwc" target="_blank">
         <button>See real profit — one-time $5</button>
       </a>
+
+      <input id="unlock" type="text" placeholder="Enter unlock code"
+        style="margin-top:15px; padding:10px; width:100%;">
+
+      <button onclick="unlock()">Unlock results</button>
+
       <p>
         One payment. No subscription.<br>
         Cheaper than one bad trade.
@@ -181,7 +197,23 @@ function calculate() {
     </div>
   `;
 }
+
+function unlock() {
+  const code = document.getElementById("unlock").value.trim();
+
+  if (!VALID_KEYS.includes(code)) {
+    alert("Invalid unlock code");
+    return;
+  }
+
+  document.getElementById("net").innerText =
+    `$${lastCalculation.netProfit.toFixed(2)}`;
+
+  document.getElementById("roi").innerText =
+    `${lastCalculation.roi.toFixed(2)}%`;
+}
 </script>
+
 
 <hr>
 
