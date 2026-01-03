@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Crypto Profit Reality Check</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
     body {
@@ -74,9 +74,25 @@
     }
 
     .result {
-      margin-top: 25px;
-      font-size: 20px;
-      font-weight: bold;
+      margin-top: 30px;
+      font-size: 18px;
+    }
+
+    .locked {
+      opacity: 0.6;
+    }
+
+    .pay-box {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px dashed #475569;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .pay-box p {
+      font-size: 14px;
+      color: #94a3b8;
     }
 
     hr {
@@ -91,17 +107,16 @@
 <h1>Your trade looks profitable. Is it really?</h1>
 
 <p>
-Most exchanges hide the real numbers.
-Fees, spreads and network costs quietly destroy profits.
-Check the truth before your next trade.
+Most exchanges show gross numbers.<br>
+Fees quietly destroy real profits.
 </p>
 
 <div class="box">
-  <p><strong>This calculator shows:</strong></p>
+  <p><strong>This calculator reveals:</strong></p>
   <ul>
-    <li>How much exchanges really take from your trade</li>
-    <li>Your real net profit (or loss)</li>
-    <li>Actual ROI after all fees</li>
+    <li>How much fees eat your profit</li>
+    <li>If the trade is actually worth it</li>
+    <li>Why “green numbers” often lie</li>
   </ul>
 </div>
 
@@ -116,65 +131,57 @@ Check the truth before your next trade.
 
 <button onclick="calculate()">Calculate</button>
 
-<div class="result" id="result"></div>
-
+<div id="result" class="result"></div>
 
 <script>
 function calculate() {
-  const buy = parseFloat(document.getElementById('buy').value);
-  const sell = parseFloat(document.getElementById('sell').value);
-  const fees = parseFloat(document.getElementById('fees').value);
-  const result = document.getElementById('result');
+  const buy = parseFloat(document.getElementById("buy").value);
+  const sell = parseFloat(document.getElementById("sell").value);
+  const fees = parseFloat(document.getElementById("fees").value);
 
   if (isNaN(buy) || isNaN(sell) || isNaN(fees)) {
-    result.innerHTML = "<p>Please fill in all fields.</p>";
+    document.getElementById("result").innerHTML =
+      "<p>Please fill in all fields.</p>";
     return;
   }
 
   const grossProfit = sell - buy;
+  const feePercent = grossProfit !== 0
+    ? (fees / grossProfit) * 100
+    : 0;
 
-  if (grossProfit <= 0) {
-    result.innerHTML = `
-      <p>Gross profit (before fees): <strong>$${grossProfit.toFixed(2)}</strong></p>
-      <p>This trade is already unprofitable before fees.</p>
-    `;
-    return;
-  }
-
-  const feeImpact = (fees / grossProfit * 100).toFixed(1);
-
-  result.innerHTML = `
-    <p>Gross profit (before fees): <strong>$${grossProfit.toFixed(2)}</strong></p>
-
-    <p>Fees take <strong>${feeImpact}%</strong> of your profit</p>
-
-    <p style="margin-top:15px;">
-      Net profit (after fees): <strong>🔒 locked</strong>
+  document.getElementById("result").innerHTML = `
+    <p>
+      Gross profit (before fees):<br>
+      <strong>$${grossProfit.toFixed(2)}</strong>
     </p>
 
     <p>
+      Fees take <strong>${feePercent.toFixed(1)}%</strong> of your profit
+    </p>
+
+    <hr>
+
+    <p class="locked">
+      Net profit (after fees): <strong>🔒 locked</strong>
+    </p>
+
+    <p class="locked">
       Real ROI (after fees): <strong>🔒 locked</strong>
     </p>
 
-    <p style="margin-top:10px; color:#94a3b8; font-size:14px;">
-      Most traders look only at gross profit and miss this.
-    </p>
-
-    <a href="https://8648838217652.gumroad.com/l/dvwjwc" target="_blank">
-      <button style="margin-top:20px;">
-        See real profit — one-time $5
-      </button>
-    </a>
-
-    <p style="font-size:14px; margin-top:10px; color:#94a3b8;">
-      One payment. No subscription. No account.<br>
-      Cheaper than one bad trade.
-    </p>
+    <div class="pay-box">
+      <a href="https://8648838217652.gumroad.com/l/dvwjwc" target="_blank">
+        <button>See real profit — one-time $5</button>
+      </a>
+      <p>
+        One payment. No subscription.<br>
+        Cheaper than one bad trade.
+      </p>
+    </div>
   `;
 }
 </script>
-
-
 
 <hr>
 
