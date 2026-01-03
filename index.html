@@ -118,7 +118,8 @@ Check the truth before your next trade.
 
 <div class="result" id="result"></div>
 
-<script>
+
+  <script>
 function calculate() {
   const buy = parseFloat(document.getElementById('buy').value);
   const sell = parseFloat(document.getElementById('sell').value);
@@ -129,18 +130,29 @@ function calculate() {
     return;
   }
 
-  const net = sell - buy - fees;
+  const grossProfit = sell - buy;
+  const feeImpact = (fees / grossProfit * 100).toFixed(1);
 
-  document.getElementById('result').innerHTML =
-    "Net profit hidden.<br><br>" +
-    "<a href='https://8648838217652.gumroad.com/l/dvwjwc' target='_blank'>" +
-    "<button>See real profit — one-time $5</button></a>" +
-    "<p style='font-size:14px; margin-top:10px; color:#94a3b8;'>" +
-    "One payment. No subscription. No account.<br>" +
-    "Cheaper than one bad trade." +
-    "</p>";
+  document.getElementById('result').innerHTML = `
+    <p>Gross profit (before fees): <strong>$${grossProfit}</strong></p>
+    <p>Fees take <strong>${feeImpact}%</strong> of your profit</p>
+
+    <p style="margin-top:15px; font-weight:bold;">
+      Real net profit is hidden.
+    </p>
+
+    <a href="https://8648838217652.gumroad.com/l/dvwjwc" target="_blank">
+      <button>See real profit — one-time $5</button>
+    </a>
+
+    <p style="font-size:14px; margin-top:10px; color:#94a3b8;">
+      One payment. No subscription. No account.<br>
+      Cheaper than one bad trade.
+    </p>
+  `;
 }
 </script>
+
 
 <hr>
 
