@@ -119,65 +119,51 @@ Check the truth before your next trade.
 <div class="result" id="result"></div>
 
 
-  <script>
+<script>
 function calculate() {
   const buy = parseFloat(document.getElementById('buy').value);
   const sell = parseFloat(document.getElementById('sell').value);
   const fees = parseFloat(document.getElementById('fees').value);
+  const result = document.getElementById('result');
 
   if (isNaN(buy) || isNaN(sell) || isNaN(fees)) {
-    document.getElementById('result').innerText = "Please fill in all fields.";
+    result.innerHTML = "<p>Please fill in all fields.</p>";
     return;
   }
 
   const grossProfit = sell - buy;
+
+  if (grossProfit <= 0) {
+    result.innerHTML = `
+      <p>Gross profit (before fees): <strong>$${grossProfit.toFixed(2)}</strong></p>
+      <p>This trade is already unprofitable before fees.</p>
+    `;
+    return;
+  }
+
   const feeImpact = (fees / grossProfit * 100).toFixed(1);
-  const [isUnlocked, setIsUnlocked] = useState(false);
 
+  result.innerHTML = `
+    <p>Gross profit (before fees): <strong>$${grossProfit.toFixed(2)}</strong></p>
 
-  document.getElementById('result').innerHTML = `
-    <p>Gross profit (before fees): <strong>$${grossProfit}</strong></p>
     <p>Fees take <strong>${feeImpact}%</strong> of your profit</p>
 
-    <p style="margin-top:15px; font-weight:bold;">
-      <div className="results">
+    <p style="margin-top:15px;">
+      Net profit (after fees): <strong>🔒 locked</strong>
+    </p>
 
-  <p>
-    Gross profit (before fees): <strong>${grossProfit}</strong>
-  </p>
+    <p>
+      Real ROI (after fees): <strong>🔒 locked</strong>
+    </p>
 
-  <p>
-    Fees take <strong>{feePercent.toFixed(1)}%</strong> of your profit
-  </p>
-
-  <p>
-    Net profit (after fees):{" "}
-    <strong>
-      {isUnlocked ? `$${netProfit.toFixed(2)}` : "🔒 locked"}
-    </strong>
-  </p>
-
-  <p>
-    Real ROI (after fees):{" "}
-    <strong>
-      {isUnlocked ? `${roi.toFixed(2)}%` : "🔒 locked"}
-    </strong>
-  </p>
-
-  {!isUnlocked && (
-  <button className="pay-button">
-    See real profit — one-time $5
-  </button>
-)}
-setIsUnlocked(true);
-
-
-</div>
-
+    <p style="margin-top:10px; color:#94a3b8; font-size:14px;">
+      Most traders look only at gross profit and miss this.
     </p>
 
     <a href="https://8648838217652.gumroad.com/l/dvwjwc" target="_blank">
-      <button>See real profit — one-time $5</button>
+      <button style="margin-top:20px;">
+        See real profit — one-time $5
+      </button>
     </a>
 
     <p style="font-size:14px; margin-top:10px; color:#94a3b8;">
@@ -187,6 +173,7 @@ setIsUnlocked(true);
   `;
 }
 </script>
+
 
 
 <hr>
