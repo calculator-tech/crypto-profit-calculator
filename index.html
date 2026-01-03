@@ -132,13 +132,48 @@ function calculate() {
 
   const grossProfit = sell - buy;
   const feeImpact = (fees / grossProfit * 100).toFixed(1);
+  const [isUnlocked, setIsUnlocked] = useState(false);
+
 
   document.getElementById('result').innerHTML = `
     <p>Gross profit (before fees): <strong>$${grossProfit}</strong></p>
     <p>Fees take <strong>${feeImpact}%</strong> of your profit</p>
 
     <p style="margin-top:15px; font-weight:bold;">
-      Real net profit is hidden.
+      <div className="results">
+
+  <p>
+    Gross profit (before fees): <strong>${grossProfit}</strong>
+  </p>
+
+  <p>
+    Fees take <strong>{feePercent.toFixed(1)}%</strong> of your profit
+  </p>
+
+  <p>
+    Net profit (after fees):{" "}
+    <strong>
+      {isUnlocked ? `$${netProfit.toFixed(2)}` : "🔒 locked"}
+    </strong>
+  </p>
+
+  <p>
+    Real ROI (after fees):{" "}
+    <strong>
+      {isUnlocked ? `${roi.toFixed(2)}%` : "🔒 locked"}
+    </strong>
+  </p>
+
+  {!isUnlocked && (
+  <button className="pay-button">
+    See real profit — one-time $5
+  </button>
+)}
+setIsUnlocked(true);
+
+
+</div>
+
     </p>
 
     <a href="https://8648838217652.gumroad.com/l/dvwjwc" target="_blank">
