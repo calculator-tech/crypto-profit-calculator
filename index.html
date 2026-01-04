@@ -31,22 +31,32 @@
       font-weight: 600;
     }
 
-  input {
-  width: 100%;
-  max-width: 520px;
-  padding: 12px 14px;
-  margin-top: 6px;
-  font-size: 16px;
-  border-radius: 8px;
-  border: 1px solid #1e293b;
-  background: #020617;
-  color: #e5e7eb;
-  box-sizing: border-box;
-}
+ <div class="field">
+  <label>Buy price ($)</label>
+  <input id="buy" type="number" placeholder="e.g. 1000">
+</div>
+
+<div class="field">
+  <label>Sell price ($)</label>
+  <input id="sell" type="number" placeholder="e.g. 1120">
+</div>
+
+<div class="field">
+  <label>Total fees ($)</label>
+  <input id="fees" type="number" placeholder="e.g. 45">
+</div>
+
 
     .field {
   margin-bottom: 16px;
 }
+
+    input:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 1px rgba(99,102,241,0.4);
+}
+
 
 
     button {
