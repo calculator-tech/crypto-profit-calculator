@@ -14,16 +14,26 @@ body {
   margin:auto;
   padding:32px 16px;
 }
-h1 {font-size:28px;margin-bottom:10px;}
-p {color:#cbd5f5;line-height:1.6;}
+
+h1 { font-size:28px; margin-bottom:10px; }
+p { color:#cbd5f5; line-height:1.6; }
+
 .box {
   border:1px solid #1e293b;
-  padding:16px;
   border-radius:10px;
+  padding:16px;
   margin:24px 0;
 }
-.field {margin-top:18px;}
-label {font-size:14px;font-weight:600;margin-bottom:6px;display:block;}
+
+.field { margin-top:18px; }
+
+label {
+  display:block;
+  margin-bottom:6px;
+  font-size:14px;
+  font-weight:600;
+}
+
 input {
   width:100%;
   padding:12px 14px;
@@ -33,32 +43,38 @@ input {
   background:#020617;
   color:#e5e7eb;
 }
+
 button {
   width:100%;
   margin-top:24px;
   padding:14px;
   font-size:16px;
   background:#6366f1;
-  color:white;
   border:none;
   border-radius:10px;
+  color:white;
   cursor:pointer;
 }
-.result {margin-top:32px;}
-.locked {opacity:.6;}
+
+button:hover { background:#4f46e5; }
+
+.locked { opacity:0.6; }
+.result { margin-top:32px; }
+hr { border:none; border-top:1px solid #1e293b; margin:28px 0; }
+
 .pay-box {
-  margin-top:24px;
-  padding:16px;
   border:1px dashed #475569;
   border-radius:10px;
+  padding:16px;
+  margin-top:24px;
   text-align:center;
 }
+
 footer {
   margin-top:40px;
   font-size:13px;
   color:#94a3b8;
 }
-hr {border:none;border-top:1px solid #1e293b;margin:24px 0;}
 </style>
 </head>
 
@@ -70,9 +86,9 @@ hr {border:none;border-top:1px solid #1e293b;margin:24px 0;}
 
 <div class="box">
 <ul>
-<li>See real net profit after fees</li>
+<li>See real net profit</li>
 <li>Understand true ROI</li>
-<li>Avoid trades that only look profitable</li>
+<li>Avoid fake “green” trades</li>
 </ul>
 </div>
 
@@ -96,69 +112,66 @@ hr {border:none;border-top:1px solid #1e293b;margin:24px 0;}
 <div id="result" class="result"></div>
 
 <script>
-let lastCalculation=null;
-const TEST_KEY="TEST-UNLOCK-123";
+let lastCalculation = null;
+const TEST_KEY = "TEST-UNLOCK-123";
 
-function isValidKey(key){
-  if(key===TEST_KEY) return true;
-  const gumroad=/^[A-Z0-9]{8}-([A-Z0-9]{8}-){2}[A-Z0-9]{8}$/i;
-  return gumroad.test(key);
+function isValidKey(key) {
+  if (key === TEST_KEY) return true;
+  const pattern = /^[A-Z0-9]{8}(-[A-Z0-9]{8}){2}$/i;
+  return pattern.test(key);
 }
 
-function calculate(){
-  const buy=parseFloat(buyEl.value);
-  const sell=parseFloat(sellEl.value);
-  const fees=parseFloat(feesEl.value);
+function calculate() {
+  const buy = +buyInput.value;
+  const sell = +sellInput.value;
+  const fees = +feesInput.value;
 
-  if(isNaN(buy)||isNaN(sell)||isNaN(fees)){
-    result.innerHTML="<p>Please fill in all fields.</p>";
+  if (!buy || !sell || !fees) {
+    result.innerHTML = "<p>Please fill in all fields.</p>";
     return;
   }
 
-  const gross=sell-buy;
-  const net=gross-fees;
-  const roi=(net/buy)*100;
+  const gross = sell - buy;
+  const net = gross - fees;
+  const roi = (net / buy) * 100;
+  const feePct = gross ? (fees / gross) * 100 : 0;
 
-  lastCalculation={net,roi};
+  lastCalculation = { net, roi };
 
-  result.innerHTML=`
-  <p><strong>Gross profit:</strong> $${gross.toFixed(2)}</p>
+  result.innerHTML = `
+<p><strong>Gross profit:</strong> $${gross.toFixed(2)}</p>
+<p>Fees eat <strong>${feePct.toFixed(1)}%</strong> of profit</p>
 
-  <hr>
+<hr>
 
-  <div id="finalMessage" class="locked">
-    <strong>Unlock to see the real outcome</strong>
-  </div>
+<div class="locked" id="lockedBlock">
+<p><strong>Unlock to see real result</strong></p>
+<p>Net profit: <strong id="net">🔒 locked</strong></p>
+<p>True ROI: <strong id="roi">🔒 locked</strong></p>
+</div>
 
-  <p class="locked">Real net result:<br><strong id="net">🔒 locked</strong></p>
-  <p class="locked">True ROI:<br><strong id="roi">🔒 locked</strong></p>
+<div class="pay-box">
+<a href="https://8648838217652.gumroad.com/l/dvwjwc" target="_blank">
+<button>Reveal real result — $5</button>
+</a>
 
-  <div class="pay-box">
-    <a href="https://8648838217652.gumroad.com/l/dvwjwc" target="_blank">
-      <button>Reveal real result — $5</button>
-    </a>
-    <input id="unlock" placeholder="Enter unlock code" style="margin-top:12px">
-    <button onclick="unlock()">Unlock results</button>
-    <p>One payment. No subscription.</p>
-  </div>`;
+<input id="unlockInput" placeholder="Enter unlock code" style="margin-top:14px">
+<button onclick="unlock()">Unlock</button>
+
+<p style="font-size:13px;">One-time payment • Instant access</p>
+</div>
+`;
 }
 
-function unlock(){
-  const code=document.getElementById("unlock").value.trim();
-  if(!isValidKey(code)){alert("Invalid unlock code");return;}
+function unlock() {
+  if (!lastCalculation) return alert("Calculate first");
 
-  net.innerText=`$${lastCalculation.net.toFixed(2)}`;
-  roi.innerText=`${lastCalculation.roi.toFixed(2)}%`;
+  const code = unlockInput.value.trim();
+  if (!isValidKey(code)) return alert("Invalid unlock code");
 
-  const box=document.getElementById("finalMessage");
-
-  if(lastCalculation.net<0){
-    box.innerHTML="<strong>This trade is a loss after fees.</strong>";
-  } else {
-    box.innerHTML="<strong>This trade survives fees — but weaker than it looks.</strong>";
-  }
-
-  box.classList.remove("locked");
+  net.textContent = `$${lastCalculation.net.toFixed(2)}`;
+  roi.textContent = `${lastCalculation.roi.toFixed(2)}%`;
+  lockedBlock.classList.remove("locked");
 }
 </script>
 
