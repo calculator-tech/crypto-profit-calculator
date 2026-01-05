@@ -191,6 +191,8 @@ function calculate() {
       Real ROI (after fees): <strong id="roi">🔒 locked</strong>
     </p>
 
+    <div id="explanation" style="margin-top:20px;"></div>
+
     <div class="pay-box">
       <a href="https://8648838217652.gumroad.com/l/dvwjwc" target="_blank">
         <button>See real profit — one-time $5</button>
@@ -213,12 +215,57 @@ function unlock() {
     return;
   }
 
+  const net = lastCalculation.netProfit;
+  const roi = lastCalculation.roi;
+
   document.getElementById("net").innerText =
-    `$${lastCalculation.netProfit.toFixed(2)}`;
+    `$${net.toFixed(2)}`;
 
   document.getElementById("roi").innerText =
-    `${lastCalculation.roi.toFixed(2)}%`;
+    `${roi.toFixed(2)}%`;
+
+  let message = "";
+
+  if (net < 0) {
+    message = `
+      <p><strong>Reality check:</strong><br>
+      This trade is actually losing money after fees.</p>
+
+      <p>
+      Many trades look profitable until fees are included.
+      This is how small losses quietly stack up over time.
+      </p>
+    `;
+  } else if (roi < 1) {
+    message = `
+      <p><strong>Low efficiency trade:</strong><br>
+      You are taking risk for a very small return.</p>
+
+      <p>
+      Even winning trades like this often underperform
+      when compared to risk-free alternatives.
+      </p>
+    `;
+  } else {
+    message = `
+      <p><strong>This trade survives fees.</strong></p>
+
+      <p>
+      Your setup still makes sense after costs.
+      Just make sure the risk matches the reward.
+      </p>
+    `;
+  }
+
+  document.getElementById("explanation").innerHTML = `
+    <hr>
+    ${message}
+    <p style="font-size:14px; color:#94a3b8;">
+      Tip: always evaluate trades after fees — not before.
+    </p>
+  `;
 }
+
 </script>
 
 <footer>
