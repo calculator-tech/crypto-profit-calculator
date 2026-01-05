@@ -154,10 +154,18 @@ Fees quietly destroy real returns.
 <script>
 let lastCalculation = null;
 
-const VALID_KEYS = [
-  "TEST-UNLOCK-123",
-  "PRO-ACCESS-456"
-];
+const TEST_KEY = "TEST-UNLOCK-123";
+
+function isValidKey(key) {
+  // Test key (for you)
+  if (key === TEST_KEY) return true;
+
+  // Gumroad license key format (UUID-like)
+  const gumroadPattern = /^[A-Z0-9]{8}-([A-Z0-9]{8}-){2}[A-Z0-9]{8}$/i;
+
+  return gumroadPattern.test(key);
+}
+
 
 function calculate() {
   const buy = parseFloat(document.getElementById("buy").value);
