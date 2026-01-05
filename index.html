@@ -9,13 +9,13 @@
 body {
   background:#020617;
   color:#e5e7eb;
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  font-family:system-ui, -apple-system, sans-serif;
   max-width:560px;
   margin:auto;
   padding:32px 16px;
 }
 
-h1 { font-size:28px; margin-bottom:10px; }
+h1 { font-size:28px; margin-bottom:8px; }
 p { color:#cbd5f5; line-height:1.6; }
 
 .box {
@@ -28,10 +28,10 @@ p { color:#cbd5f5; line-height:1.6; }
 .field { margin-top:18px; }
 
 label {
-  display:block;
-  margin-bottom:6px;
   font-size:14px;
   font-weight:600;
+  display:block;
+  margin-bottom:6px;
 }
 
 input {
@@ -58,15 +58,14 @@ button {
 
 button:hover { background:#4f46e5; }
 
+.result { margin-top:32px; font-size:16px; }
 .locked { opacity:0.6; }
-.result { margin-top:32px; }
-hr { border:none; border-top:1px solid #1e293b; margin:28px 0; }
 
 .pay-box {
+  margin-top:24px;
+  padding:16px;
   border:1px dashed #475569;
   border-radius:10px;
-  padding:16px;
-  margin-top:24px;
   text-align:center;
 }
 
@@ -82,29 +81,33 @@ footer {
 
 <h1>Your trade looks profitable.<br>Is it really?</h1>
 
-<p>Most platforms show gross profit.<br>Fees quietly destroy real returns.</p>
+<p>
+Most platforms show gross profit.<br>
+Fees quietly destroy real returns.
+</p>
 
 <div class="box">
+<strong>This calculator shows:</strong>
 <ul>
-<li>See real net profit</li>
-<li>Understand true ROI</li>
-<li>Avoid fake “green” trades</li>
+<li>How much fees eat your profit</li>
+<li>If the trade is actually worth it</li>
+<li>Why “green numbers” often lie</li>
 </ul>
 </div>
 
 <div class="field">
 <label>Buy price ($)</label>
-<input id="buy" type="number">
+<input id="buy" type="number" placeholder="1000">
 </div>
 
 <div class="field">
 <label>Sell price ($)</label>
-<input id="sell" type="number">
+<input id="sell" type="number" placeholder="1120">
 </div>
 
 <div class="field">
 <label>Total fees ($)</label>
-<input id="fees" type="number">
+<input id="fees" type="number" placeholder="45">
 </div>
 
 <button onclick="calculate()">Calculate</button>
@@ -115,63 +118,62 @@ footer {
 let lastCalculation = null;
 const TEST_KEY = "TEST-UNLOCK-123";
 
-function isValidKey(key) {
-  if (key === TEST_KEY) return true;
-  const pattern = /^[A-Z0-9]{8}(-[A-Z0-9]{8}){2}$/i;
-  return pattern.test(key);
-}
-
 function calculate() {
-  const buy = +buyInput.value;
-  const sell = +sellInput.value;
-  const fees = +feesInput.value;
+  const buy = parseFloat(document.getElementById("buy").value);
+  const sell = parseFloat(document.getElementById("sell").value);
+  const fees = parseFloat(document.getElementById("fees").value);
 
-  if (!buy || !sell || !fees) {
-    result.innerHTML = "<p>Please fill in all fields.</p>";
+  if (isNaN(buy) || isNaN(sell) || isNaN(fees)) {
+    document.getElementById("result").innerHTML =
+      "<p>Please fill all fields.</p>";
     return;
   }
 
   const gross = sell - buy;
   const net = gross - fees;
   const roi = (net / buy) * 100;
-  const feePct = gross ? (fees / gross) * 100 : 0;
+  const feePct = gross !== 0 ? (fees / gross) * 100 : 0;
 
   lastCalculation = { net, roi };
 
-  result.innerHTML = `
-<p><strong>Gross profit:</strong> $${gross.toFixed(2)}</p>
-<p>Fees eat <strong>${feePct.toFixed(1)}%</strong> of profit</p>
+  document.getElementById("result").innerHTML = `
+    <p><strong>Gross profit:</strong> $${gross.toFixed(2)}</p>
+    <p>Fees eat <strong>${feePct.toFixed(1)}%</strong> of profit</p>
 
-<hr>
+    <hr>
 
-<div class="locked" id="lockedBlock">
-<p><strong>Unlock to see real result</strong></p>
-<p>Net profit: <strong id="net">🔒 locked</strong></p>
-<p>True ROI: <strong id="roi">🔒 locked</strong></p>
-</div>
+    <p class="locked">
+      Net profit: <strong id="net">🔒 locked</strong>
+    </p>
 
-<div class="pay-box">
-<a href="https://8648838217652.gumroad.com/l/dvwjwc" target="_blank">
-<button>Reveal real result — $5</button>
-</a>
+    <p class="locked">
+      True ROI: <strong id="roi">🔒 locked</strong>
+    </p>
 
-<input id="unlockInput" placeholder="Enter unlock code" style="margin-top:14px">
-<button onclick="unlock()">Unlock</button>
+    <div class="pay-box">
+      <a href="https://8648838217652.gumroad.com/l/dvwjwc" target="_blank">
+        <button>Reveal real result — $5</button>
+      </a>
 
-<p style="font-size:13px;">One-time payment • Instant access</p>
-</div>
-`;
+      <input id="unlockInput" placeholder="Enter unlock code" style="margin-top:12px">
+      <button onclick="unlock()">Unlock</button>
+    </div>
+  `;
 }
 
 function unlock() {
-  if (!lastCalculation) return alert("Calculate first");
+  const code = document.getElementById("unlockInput").value.trim();
 
-  const code = unlockInput.value.trim();
-  if (!isValidKey(code)) return alert("Invalid unlock code");
+  if (code !== TEST_KEY) {
+    alert("Invalid unlock code");
+    return;
+  }
 
-  net.textContent = `$${lastCalculation.net.toFixed(2)}`;
-  roi.textContent = `${lastCalculation.roi.toFixed(2)}%`;
-  lockedBlock.classList.remove("locked");
+  document.getElementById("net").innerText =
+    `$${lastCalculation.net.toFixed(2)}`;
+
+  document.getElementById("roi").innerText =
+    `${lastCalculation.roi.toFixed(2)}%`;
 }
 </script>
 
