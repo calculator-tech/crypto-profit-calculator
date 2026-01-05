@@ -258,6 +258,29 @@ function unlock() {
   document.getElementById("roi").innerText =
     `${roi.toFixed(2)}%`;
 
+  const finalMessage = document.getElementById("finalMessage");
+
+if (net < 0) {
+  finalMessage.innerHTML = `
+    <p><strong>This trade is actually a loss after fees.</strong></p>
+    <p>
+      Without accounting for costs, it would look profitable.
+      This is how small losses quietly stack up.
+    </p>
+  `;
+} else {
+  finalMessage.innerHTML = `
+    <p><strong>This trade survives fees.</strong></p>
+    <p>
+      The profit is real — but smaller than exchanges show.
+      Make sure the risk justifies the return.
+    </p>
+  `;
+}
+
+finalMessage.classList.remove("locked");
+
+
   let message = "";
 
   if (net < 0) {
