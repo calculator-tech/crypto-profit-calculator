@@ -191,13 +191,20 @@ function calculate() {
 
     <hr>
 
-    <p class="locked">
-      Net profit (after fees): <strong id="net">🔒 locked</strong>
-    </p>
+    <div id="finalMessage" class="locked">
+  <p><strong>Unlock to see the real result</strong></p>
+</div>
 
-    <p class="locked">
-      Real ROI (after fees): <strong id="roi">🔒 locked</strong>
-    </p>
+<p class="locked">
+  Real net result after all fees:<br>
+  <strong id="net">🔒 locked</strong>
+</p>
+
+<p class="locked">
+  True ROI (what you actually earned):<br>
+  <strong id="roi">🔒 locked</strong>
+</p>
+
 
     <div id="explanation" style="margin-top:20px;"></div>
 
@@ -283,6 +290,23 @@ function unlock() {
       </p>
     `;
   }
+
+  const message = document.getElementById("finalMessage");
+
+if (lastCalculation.netProfit >= 0) {
+  message.innerHTML = `
+    <p><strong>This trade is profitable — but weaker than it looks.</strong></p>
+    <p>Exchanges don’t show this number. This is your real outcome after all costs.</p>
+  `;
+} else {
+  message.innerHTML = `
+    <p><strong>This trade is actually a loss after fees.</strong></p>
+    <p>Without this calculation, it would look like a winning trade.</p>
+  `;
+}
+
+message.classList.remove("locked");
+
 
   document.getElementById("explanation").innerHTML = `
     <hr>
