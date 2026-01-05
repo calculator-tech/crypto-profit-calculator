@@ -237,7 +237,7 @@ function calculate() {
 function unlock() {
   const code = document.getElementById("unlock").value.trim();
 
-  if (!VALID_KEYS.includes(code)) {
+  if (!isValidKey(code)) {
     alert("Invalid unlock code");
     return;
   }
