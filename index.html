@@ -6,111 +6,59 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-  body {
-    background: #020617;
-    color: #e5e7eb;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-    max-width: 560px;
-    margin: auto;
-    padding: 32px 16px;
-  }
-
-  h1 {
-    font-size: 28px;
-    margin-bottom: 10px;
-  }
-
-  p {
-    color: #cbd5f5;
-    line-height: 1.6;
-  }
-
-  .box {
-    background: #020617;
-    border: 1px solid #1e293b;
-    padding: 16px;
-    border-radius: 10px;
-    margin: 24px 0;
-  }
-
-  .field {
-    margin-top: 18px;
-  }
-
-  label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: 600;
-    font-size: 14px;
-  }
-
-  input {
-    width: 100%;
-    padding: 12px 14px;
-    font-size: 16px;
-    border-radius: 8px;
-    border: 1px solid #1e293b;
-    background: #020617;
-    color: #e5e7eb;
-    box-sizing: border-box;
-  }
-
-  input:focus {
-    outline: none;
-    border-color: #6366f1;
-    box-shadow: 0 0 0 1px rgba(99,102,241,0.4);
-  }
-
-  button {
-    width: 100%;
-    margin-top: 24px;
-    padding: 14px;
-    font-size: 16px;
-    background: #6366f1;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-  }
-
-  button:hover {
-    background: #4f46e5;
-  }
-
-  .result {
-    margin-top: 32px;
-    font-size: 16px;
-  }
-
-  .locked {
-    opacity: 0.6;
-  }
-
-  hr {
-    margin: 28px 0;
-    border: none;
-    border-top: 1px solid #1e293b;
-  }
-
-  .pay-box {
-    margin-top: 24px;
-    padding: 16px;
-    border: 1px dashed #475569;
-    border-radius: 10px;
-    text-align: center;
-  }
-
-  .pay-box p {
-    font-size: 13px;
-    color: #94a3b8;
-    margin-top: 10px;
-  }
-
-  footer {
-    margin-top: 40px;
-    font-size: 13px;
-    color: #94a3b8;
-  }
+body {
+  background:#020617;
+  color:#e5e7eb;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  max-width:560px;
+  margin:auto;
+  padding:32px 16px;
+}
+h1 {font-size:28px;margin-bottom:10px;}
+p {color:#cbd5f5;line-height:1.6;}
+.box {
+  border:1px solid #1e293b;
+  padding:16px;
+  border-radius:10px;
+  margin:24px 0;
+}
+.field {margin-top:18px;}
+label {font-size:14px;font-weight:600;margin-bottom:6px;display:block;}
+input {
+  width:100%;
+  padding:12px 14px;
+  font-size:16px;
+  border-radius:8px;
+  border:1px solid #1e293b;
+  background:#020617;
+  color:#e5e7eb;
+}
+button {
+  width:100%;
+  margin-top:24px;
+  padding:14px;
+  font-size:16px;
+  background:#6366f1;
+  color:white;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+}
+.result {margin-top:32px;}
+.locked {opacity:.6;}
+.pay-box {
+  margin-top:24px;
+  padding:16px;
+  border:1px dashed #475569;
+  border-radius:10px;
+  text-align:center;
+}
+footer {
+  margin-top:40px;
+  font-size:13px;
+  color:#94a3b8;
+}
+hr {border:none;border-top:1px solid #1e293b;margin:24px 0;}
 </style>
 </head>
 
@@ -118,33 +66,29 @@
 
 <h1>Your trade looks profitable.<br>Is it really?</h1>
 
-<p>
-Most platforms show gross profit.<br>
-Fees quietly destroy real returns.
-</p>
+<p>Most platforms show gross profit.<br>Fees quietly destroy real returns.</p>
 
 <div class="box">
-  <strong>This calculator shows:</strong>
-  <ul>
-    <li>How much fees eat your profit</li>
-    <li>If the trade is actually worth it</li>
-    <li>Why “green numbers” often lie</li>
-  </ul>
+<ul>
+<li>See real net profit after fees</li>
+<li>Understand true ROI</li>
+<li>Avoid trades that only look profitable</li>
+</ul>
 </div>
 
 <div class="field">
-  <label>Buy price ($)</label>
-  <input id="buy" type="number" placeholder="e.g. 1000">
+<label>Buy price ($)</label>
+<input id="buy" type="number">
 </div>
 
 <div class="field">
-  <label>Sell price ($)</label>
-  <input id="sell" type="number" placeholder="e.g. 1120">
+<label>Sell price ($)</label>
+<input id="sell" type="number">
 </div>
 
 <div class="field">
-  <label>Total fees ($)</label>
-  <input id="fees" type="number" placeholder="e.g. 45">
+<label>Total fees ($)</label>
+<input id="fees" type="number">
 </div>
 
 <button onclick="calculate()">Calculate</button>
@@ -152,178 +96,76 @@ Fees quietly destroy real returns.
 <div id="result" class="result"></div>
 
 <script>
-let lastCalculation = null;
+let lastCalculation=null;
+const TEST_KEY="TEST-UNLOCK-123";
 
-const TEST_KEY = "TEST-UNLOCK-123";
-
-function isValidKey(key) {
-  // Test key (for you)
-  if (key === TEST_KEY) return true;
-
-  // Gumroad license key format (UUID-like)
-  const gumroadPattern = /^[A-Z0-9]{8}-([A-Z0-9]{8}-){2}[A-Z0-9]{8}$/i;
-
-  return gumroadPattern.test(key);
+function isValidKey(key){
+  if(key===TEST_KEY) return true;
+  const gumroad=/^[A-Z0-9]{8}-([A-Z0-9]{8}-){2}[A-Z0-9]{8}$/i;
+  return gumroad.test(key);
 }
 
+function calculate(){
+  const buy=parseFloat(buyEl.value);
+  const sell=parseFloat(sellEl.value);
+  const fees=parseFloat(feesEl.value);
 
-function calculate() {
-  const buy = parseFloat(document.getElementById("buy").value);
-  const sell = parseFloat(document.getElementById("sell").value);
-  const fees = parseFloat(document.getElementById("fees").value);
-
-  if (isNaN(buy) || isNaN(sell) || isNaN(fees)) {
-    document.getElementById("result").innerHTML =
-      "<p>Please fill in all fields.</p>";
+  if(isNaN(buy)||isNaN(sell)||isNaN(fees)){
+    result.innerHTML="<p>Please fill in all fields.</p>";
     return;
   }
 
-  const grossProfit = sell - buy;
-  const netProfit = grossProfit - fees;
-  const roi = (netProfit / buy) * 100;
-  const feePercent = grossProfit !== 0 ? (fees / grossProfit) * 100 : 0;
+  const gross=sell-buy;
+  const net=gross-fees;
+  const roi=(net/buy)*100;
 
-  lastCalculation = { netProfit, roi };
+  lastCalculation={net,roi};
 
-  document.getElementById("result").innerHTML = `
-    <p><strong>Gross profit (before fees):</strong><br>$${grossProfit.toFixed(2)}</p>
-    <p>Fees take <strong>${feePercent.toFixed(1)}%</strong> of your profit</p>
+  result.innerHTML=`
+  <p><strong>Gross profit:</strong> $${gross.toFixed(2)}</p>
 
-    <hr>
+  <hr>
 
-    <div id="finalMessage" class="locked">
-  <p><strong>Unlock to see the real result</strong></p>
-</div>
+  <div id="finalMessage" class="locked">
+    <strong>Unlock to see the real outcome</strong>
+  </div>
 
-<p class="locked">
-  Real net result after all fees:<br>
-  <strong id="net">🔒 locked</strong>
-</p>
+  <p class="locked">Real net result:<br><strong id="net">🔒 locked</strong></p>
+  <p class="locked">True ROI:<br><strong id="roi">🔒 locked</strong></p>
 
-<p class="locked">
-  True ROI (what you actually earned):<br>
-  <strong id="roi">🔒 locked</strong>
-</p>
-
-
-    <div id="explanation" style="margin-top:20px;"></div>
-
-    <div class="pay-box">
-    <p style="margin-bottom:12px;">
-  <strong>What you’re missing right now:</strong>
-</p>
-
-<ul style="margin-bottom:16px;">
-  <li>Exact net profit after all fees</li>
-  <li>Real ROI (not the “exchange version”)</li>
-  <li>Clear verdict: worth it or not</li>
-</ul>
-
-<p style="font-size:14px; color:#94a3b8;">
-  Most traders lose money not because of bad entries,
-  but because they ignore costs.
-</p>
-
-      <a href="https://8648838217652.gumroad.com/l/dvwjwc" target="_blank">
-        <button>Reveal real result — $5 one time</button>
-      </a>
-
-      <input id="unlock" type="text" placeholder="Enter unlock code" style="margin-top:14px">
-
-      <button onclick="unlock()">Unlock results</button>
-
-      <p>
-  One-time payment. No subscription.<br>
-  Instant unlock. No account required.
-</p>
-
-    </div>
-  `;
+  <div class="pay-box">
+    <a href="https://8648838217652.gumroad.com/l/dvwjwc" target="_blank">
+      <button>Reveal real result — $5</button>
+    </a>
+    <input id="unlock" placeholder="Enter unlock code" style="margin-top:12px">
+    <button onclick="unlock()">Unlock results</button>
+    <p>One payment. No subscription.</p>
+  </div>`;
 }
 
-function unlock() {
-  const code = document.getElementById("unlock").value.trim();
+function unlock(){
+  const code=document.getElementById("unlock").value.trim();
+  if(!isValidKey(code)){alert("Invalid unlock code");return;}
 
-  if (!isValidKey(code)) {
-    alert("Invalid unlock code");
-    return;
-  }
+  net.innerText=`$${lastCalculation.net.toFixed(2)}`;
+  roi.innerText=`${lastCalculation.roi.toFixed(2)}%`;
 
-  const net = lastCalculation.netProfit;
-  const roi = lastCalculation.roi;
+  const box=document.getElementById("finalMessage");
 
-  document.getElementById("net").innerText =
-    `$${net.toFixed(2)}`;
-
-  document.getElementById("roi").innerText =
-    `${roi.toFixed(2)}%`;
-
-  let message = "";
-
-  if (net < 0) {
-    message = `
-      <p><strong>Reality check:</strong><br>
-      This trade is actually losing money after fees.</p>
-
-      <p>
-      Many trades look profitable until fees are included.
-      This is how small losses quietly stack up over time.
-      </p>
-    `;
-  } else if (roi < 1) {
-    message = `
-      <p><strong>Low efficiency trade:</strong><br>
-      You are taking risk for a very small return.</p>
-
-      <p>
-      Even winning trades like this often underperform
-      when compared to risk-free alternatives.
-      </p>
-    `;
+  if(lastCalculation.net<0){
+    box.innerHTML="<strong>This trade is a loss after fees.</strong>";
   } else {
-    message = `
-      <p><strong>This trade survives fees.</strong></p>
-
-      <p>
-      Your setup still makes sense after costs.
-      Just make sure the risk matches the reward.
-      </p>
-    `;
+    box.innerHTML="<strong>This trade survives fees — but weaker than it looks.</strong>";
   }
 
-  const message = document.getElementById("finalMessage");
-
-if (lastCalculation.netProfit >= 0) {
-  message.innerHTML = `
-    <p><strong>This trade is profitable — but weaker than it looks.</strong></p>
-    <p>Exchanges don’t show this number. This is your real outcome after all costs.</p>
-  `;
-} else {
-  message.innerHTML = `
-    <p><strong>This trade is actually a loss after fees.</strong></p>
-    <p>Without this calculation, it would look like a winning trade.</p>
-  `;
+  box.classList.remove("locked");
 }
-
-message.classList.remove("locked");
-
-
-  document.getElementById("explanation").innerHTML = `
-    <hr>
-    ${message}
-    <p style="font-size:14px; color:#94a3b8;">
-      Tip: always evaluate trades after fees — not before.
-    </p>
-  `;
-}
-
 </script>
 
 <footer>
 • No login required<br>
 • No data stored<br>
-• No financial advice<br>
-• Works instantly in your browser
+• No financial advice
 </footer>
 
 </body>
