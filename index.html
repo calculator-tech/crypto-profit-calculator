@@ -26,7 +26,6 @@
   }
 
   .box {
-    background: #020617;
     border: 1px solid #1e293b;
     padding: 16px;
     border-radius: 10px;
@@ -100,10 +99,9 @@
     text-align: center;
   }
 
-  .pay-box p {
-    font-size: 13px;
-    color: #94a3b8;
-    margin-top: 10px;
+  .pay-box ul {
+    text-align: left;
+    margin: 12px 0;
   }
 
   footer {
@@ -153,19 +151,13 @@ Fees quietly destroy real returns.
 
 <script>
 let lastCalculation = null;
-
 const TEST_KEY = "TEST-UNLOCK-123";
 
 function isValidKey(key) {
-  // Test key (for you)
   if (key === TEST_KEY) return true;
-
-  // Gumroad license key format (UUID-like)
-  const gumroadPattern = /^[A-Z0-9]{8}-([A-Z0-9]{8}-){2}[A-Z0-9]{8}$/i;
-
+  const gumroadPattern = /^[A-Z0-9]{8}(-[A-Z0-9]{8}){3}$/i;
   return gumroadPattern.test(key);
 }
-
 
 function calculate() {
   const buy = parseFloat(document.getElementById("buy").value);
@@ -192,137 +184,84 @@ function calculate() {
     <hr>
 
     <div id="finalMessage" class="locked">
-  <p><strong>Unlock to see the real result</strong></p>
-</div>
+      <p><strong>Unlock to see the real result</strong></p>
+    </div>
 
-<p class="locked">
-  Real net result after all fees:<br>
-  <strong id="net">🔒 locked</strong>
-</p>
+    <p class="locked">
+      Real net result after all fees:<br>
+      <strong id="net">🔒 locked</strong>
+    </p>
 
-<p class="locked">
-  True ROI (what you actually earned):<br>
-  <strong id="roi">🔒 locked</strong>
-</p>
-
-
-    <div id="explanation" style="margin-top:20px;"></div>
+    <p class="locked">
+      True ROI (what you actually earned):<br>
+      <strong id="roi">🔒 locked</strong>
+    </p>
 
     <div class="pay-box">
-    <p style="margin-bottom:12px;">
-  <strong>What you’re missing right now:</strong>
-</p>
-
-<ul style="margin-bottom:16px;">
-  <li>Exact net profit after all fees</li>
-  <li>Real ROI (not the “exchange version”)</li>
-  <li>Clear verdict: worth it or not</li>
-</ul>
-
-<p style="font-size:14px; color:#94a3b8;">
-  Most traders lose money not because of bad entries,
-  but because they ignore costs.
-</p>
+      <p><strong>What you’re missing right now:</strong></p>
+      <ul>
+        <li>Exact net profit after all fees</li>
+        <li>Real ROI (not the exchange version)</li>
+        <li>Clear verdict: worth it or not</li>
+      </ul>
 
       <a href="https://8648838217652.gumroad.com/l/dvwjwc" target="_blank">
         <button>Reveal real result — $5 one time</button>
       </a>
 
       <input id="unlock" type="text" placeholder="Enter unlock code" style="margin-top:14px">
-
       <button onclick="unlock()">Unlock results</button>
 
-      <p>
-  One-time payment. No subscription.<br>
-  Instant unlock. No account required.
-</p>
-
+      <p style="font-size:13px; color:#94a3b8;">
+        One-time payment. No subscription.<br>
+        Instant unlock. No account required.
+      </p>
     </div>
   `;
 }
 
 function unlock() {
   const code = document.getElementById("unlock").value.trim();
-
   if (!isValidKey(code)) {
     alert("Invalid unlock code");
     return;
   }
 
-  const net = lastCalculation.netProfit;
-  const roi = lastCalculation.roi;
+  const { netProfit: net, roi } = lastCalculation;
 
-  document.getElementById("net").innerText =
-    `$${net.toFixed(2)}`;
-
-  document.getElementById("roi").innerText =
-    `${roi.toFixed(2)}%`;
+  document.getElementById("net").innerText = `$${net.toFixed(2)}`;
+  document.getElementById("roi").innerText = `${roi.toFixed(2)}%`;
 
   const finalMessage = document.getElementById("finalMessage");
 
-if (net < 0) {
-  finalMessage.innerHTML = `
-    <p><strong>This trade is actually a loss after fees.</strong></p>
-    <p>
-      Without accounting for costs, it would look profitable.
-      This is how small losses quietly stack up.
-    </p>
-  `;
-} else {
-  finalMessage.innerHTML = `
-    <p><strong>This trade survives fees.</strong></p>
-    <p>
-      The profit is real — but smaller than exchanges show.
-      Make sure the risk justifies the return.
-    </p>
-  `;
-}
-
-finalMessage.classList.remove("locked");
-
-
-  let message = "";
-
   if (net < 0) {
-    message = `
-      <p><strong>Reality check:</strong><br>
-      This trade is actually losing money after fees.</p>
-
+    finalMessage.innerHTML = `
+      <p><strong>This trade looks profitable — but isn’t.</strong></p>
       <p>
-      Many trades look profitable until fees are included.
-      This is how small losses quietly stack up over time.
+        After fees, it quietly turns into a loss.
+        This is exactly how traders bleed money without noticing.
       </p>
-    `;
-  } else if (roi < 1) {
-    message = `
-      <p><strong>Low efficiency trade:</strong><br>
-      You are taking risk for a very small return.</p>
-
-      <p>
-      Even winning trades like this often underperform
-      when compared to risk-free alternatives.
+      <p style="font-size:14px; color:#94a3b8;">
+        The edge is not in winning more trades —
+        it’s in avoiding bad ones like this.
       </p>
     `;
   } else {
-    message = `
-      <p><strong>This trade survives fees.</strong></p>
-
+    finalMessage.innerHTML = `
+      <p><strong>This trade survives all fees.</strong></p>
       <p>
-      Your setup still makes sense after costs.
-      Just make sure the risk matches the reward.
+        The profit is real — but smaller than what exchanges show.
+        That difference is where most strategies fail.
+      </p>
+      <p style="font-size:14px; color:#94a3b8;">
+        Use this check on every trade.
+        Consistency matters more than big wins.
       </p>
     `;
   }
 
-  document.getElementById("explanation").innerHTML = `
-    <hr>
-    ${message}
-    <p style="font-size:14px; color:#94a3b8;">
-      Tip: always evaluate trades after fees — not before.
-    </p>
-  `;
+  finalMessage.classList.remove("locked");
 }
-
 </script>
 
 <footer>
